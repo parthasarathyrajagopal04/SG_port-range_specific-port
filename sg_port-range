@@ -1,0 +1,16 @@
+import boto3
+ec2 = boto3.client("ec2", region_name="region")
+sg=ec2.describe_security_groups()
+def lambda_handler(event, context):
+    try:    
+        for group in sg['SecurityGroups']:
+            for permission in group['IpPermissions']:
+                for ip in permission['IpRanges']:
+    	            for groupid in permission['UserIdGroupPairs']:
+    	                from_port=permission.get('FromPort')
+    	                print(from_port)
+    	                to_port=permission.get('ToPort')
+    	                if(from_port == 22 and to_port == 22):
+    	                   print groupid['GroupId']
+    except:
+        print('No port found!!')
